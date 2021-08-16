@@ -3,7 +3,7 @@ import numpy as np
 import os
 import time
 video_path = './cctv.mp4'
-output_path = './background_extraction_output.mp4'
+output_path = './mask_background_subtraction_output.mp4'
 video = cv2.VideoCapture(video_path)
 
 width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -20,8 +20,8 @@ print(codec, type(codec))
 out = cv2.VideoWriter(output_path, codec, fps, (width, height)) 
 
 fgbg = cv2.createBackgroundSubtractorKNN(detectShadows=False)
-# fgbg = cv2.bgsegm.createBackgroundSubtractorMOG()
-# fgbg = cv2.createBackgroundSubtractorMOG2(detectShadows=False)
+# fgbg = cv2.bgsegm.createBackgroundSubtractorMOG(history=200,nmixtures=3,backgroundRatio=0.7, noiseSigma=0)
+# fgbg = cv2.createBackgroundSubtractorMOG2(history=200,varThreshold=32,detectShadows=False)
 # fgbg = cv2.bgsegm.createBackgroundSubtractorGMG(initializationFrames=20, decisionThreshold=0.5)
 
 
@@ -46,7 +46,7 @@ while(1):
     # background_extraction_mask = cv2.morphologyEx(background_extraction_mask,
     #                                  cv2.MORPH_CLOSE, kernel)
     background_extraction_mask = cv2.dilate(background_extraction_mask,kernel,iterations=1)
-
+    print(background_extraction_mask)
     background_extraction_mask = np.stack((background_extraction_mask,)*3, axis=-1)
     bitwise_image = cv2.bitwise_and(frame, background_extraction_mask)
 
